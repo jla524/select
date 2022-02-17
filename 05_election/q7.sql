@@ -10,4 +10,4 @@ SELECT DISTINCT s.state, s.winner
         WHERE year >= 1988
           AND s.state = o.state
           AND s.winner <> o.winner
-       );
+);
