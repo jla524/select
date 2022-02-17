@@ -1,0 +1,15 @@
+Given the results of the previous queries, would it be fair to use this data
+to claim that 2015 had the "hottest July on record"? Why or why not?
+
+Fair enough, as query 8 claims that 2015 had the hottest average maximum
+temperature in July. However, one may counter by pointing out the fact that
+query 4 claims 2009 had the highest maximum temperature. So it really depends
+on how the "hottest July on record" is defined.
+
+Take a look at the article below. It claims that Vancouver had its hottest
+summer in 2021. The claim was then supported by the mean daily average
+temperatures. But since daily averages are not available in this dataset, the
+average maximum is a good substitute.
+
+Artile link:
+https://www.vancouverisawesome.com/local-news/2021-was-vancouvers-second-hottest-summer-ever-recorded-4273941
