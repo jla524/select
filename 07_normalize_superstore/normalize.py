@@ -77,7 +77,7 @@ class Core:
 def get_names(path: Path) -> list[str]:
     """
     Get a list of names from file path
-    :param path: file path to read from
+    :param path: file path with names
     :returns: a list of names
     """
     if not path.is_file():
@@ -145,21 +145,24 @@ def fill_lookups(tables: dict[str, dict[Any, int]],
 def store_lookup(name: str, values: dict[Any, int]) -> None:
     """
     Store lookup table as a CSV file
-    :param name:
-    :param values:
+    :param name: name of lookup table
+    :param values: values in lookup
     :returns: None
     """
     storage_path = Path(f'{name}.csv')
-    with storage_path.open('w') as file:
+    with storage_path.open('w', encoding='utf-8') as file:
         file.write(f'{name}_id,{name}_name\n')
-        for name, _id in values.items():
-            file.write(f'{_id},{name}\n')
+        for column_name, _id in values.items():
+            file.write(f'{_id},{column_name}\n')
 
 
 def fill_latest(tables: dict[str, dict[Any, int]],
                 names: list[str]) -> dict[str, dict[Any, int]]:
     """
     Fill core lookup tables with latest index
+    :param tables: a dict of lookup tables
+    :param names: a list of table names
+    :returns: lookup table with latest index
     """
     for name in names:
         tables[name]['_latest'] = 0
@@ -172,6 +175,11 @@ def fill_core(core_path: Path,
               orders: DataFrame) -> dict[str, DataFrame]:
     """
     Fill core tables with existing data
+    :param core_path: a file path with core tables
+    :param tables: a dict lookup tables
+    :param names: a list of core table names
+    :param orders: a DataFrame with existing data
+    :returns: a dict of DataFrames with table values
     """
     core = Core(core_path)
     for _, row in orders.iterrows():
@@ -184,7 +192,7 @@ def fill_core(core_path: Path,
 def normalize() -> dict[str, Any]:
     """
     Convert the orders table into normalized tables
-    :returns: None
+    :returns: a dict of table values
     """
     orders_path = Path('orders.csv')
     old_table = get_orders(orders_path)
@@ -201,10 +209,19 @@ def normalize() -> dict[str, Any]:
     return lookups | core
 
 
+def store_results(results: dict[str, Any]) -> None:
+    """
+    Store results in CSV format depending on the data type
+    :param results: a dict of table names and data
+    :returns: None
+    """
+    for table_name, table_values in results.items():
+        if isinstance(table_values, dict):
+            store_lookup(table_name, table_values)
+        if isinstance(table_values, DataFrame):
+            table_values.to_csv(f'{table_name}.csv', index=False)
+
+
 if __name__ == '__main__':
-    results = normalize()
-    for table_name, results in results.items():
-        if isinstance(results, dict):
-            store_lookup(table_name, results)
-        if isinstance(results, DataFrame):
-            results.to_csv(f'{table_name}.csv', index=False)
+    normalized = normalize()
+    store_results(normalized)
