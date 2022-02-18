@@ -151,7 +151,7 @@ def store_lookup(name: str, values: dict[Any, int]) -> None:
     """
     storage_path = Path(f'{name}.csv')
     with storage_path.open('w', encoding='utf-8') as file:
-        file.write(f'{name}_id,{name}_name\n')
+        file.write(f'{name}_id,{name}\n')
         for column_name, _id in values.items():
             file.write(f'{_id},{column_name}\n')
 
@@ -200,10 +200,10 @@ def normalize() -> dict[str, Any]:
     tables_path = Path('new_tables.txt')
     table_names = get_names(tables_path)
     lookups = make_tables(table_names)
-    lookup_names = table_names[:10]
+    lookup_names = table_names[:11]
     lookups = fill_lookups(lookups, lookup_names, old_table)
     columns_path = Path('new_columns.json')
-    core_names = table_names[10:]
+    core_names = table_names[11:]
     fill_latest(lookups, core_names)
     core = fill_core(columns_path, lookups, core_names, old_table)
     return lookups | core

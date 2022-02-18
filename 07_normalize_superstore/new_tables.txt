@@ -7,6 +7,7 @@ city
 product_category
 product_subcategory
 product_container
+product_name
 order_priority
 customer
 address
