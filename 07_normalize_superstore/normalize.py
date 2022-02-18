@@ -26,28 +26,40 @@ class Core:
         for table, column_names in columns_map.items():
             self.data[table] = DataFrame(columns=column_names)
 
-    def insert_customer(self, data, table_ids):
+    def get_key(self, data, table_ids, table):
+        """
+        Create a unique key for lookup table
+        """
+        columns = self.data[table].columns
+        result = []
+        for column in columns[1:]:
+            if column.endswith('_id'):
+                column_map = table_ids[column[:-3]]
+                value = data[column[:-3]]
+                result.append(column_map[value])
+            else:
+                result.append(data[column])
+        return result
+
+    def insert_values(self, data, table_ids, table):
         """
         Insert existing data into new customer table
         :param data: a row of existing data
         :param table_ids: lookup table
-        :returns: updated lookup table
+        :returns: updated lookup table and customer id
         """
-        name = data['customer_name']
-        segment = data['customer_segment']
-        segment_map = table_ids['customer_segment']
-        customer_map = table_ids['customer']
-        _id = customer_map['_latest']
-        key = (name, segment_map[segment])
-        if key in table_ids['customer']:
-            _id = table_ids['customer'][key]
+        columns = self.data[table].columns
+        table_map = table_ids[table]
+        key = self.get_key(data, table_ids, table)
+        if tuple(key) in table_map:
+            _id = table_ids[table][tuple(key)]
         else:
-            table_ids['customer'][(name, segment_map[segment])] = _id
-            customer_map['_latest'] += 1
-        columns = self.data['customer'].columns
-        row = DataFrame([[_id, name, segment_map[segment]]], columns=columns)
-        self.data['customer'] = concat([self.data['customer'], row], axis=0)
-        return table_ids
+            _id = table_map['_latest'] + 1
+            table_ids[table][tuple(key)] = _id
+            table_map['_latest'] += 1
+        row = DataFrame([[_id] + key], columns=columns)
+        self.data[table] = concat([self.data[table], row], axis=0)
+        return table_ids, _id
 
 
 def get_names(path: Path) -> list[str]:
@@ -71,6 +83,7 @@ def make_tables(names: list[str]) -> dict[str, dict[Any, int]]:
     """
     tables: dict[str, dict[Any, int]] = {name: {} for name in names}
     return tables
+
 
 def get_orders(path: Path) -> DataFrame:
     """
@@ -123,23 +136,23 @@ def fill_latest(tables: dict[str, dict[Any, int]],
     Fill core lookup tables with latest index
     """
     for name in names:
-        tables[name]['_latest'] = 1
+        tables[name]['_latest'] = 0
     return tables
 
 
 def fill_core(core_path: Path,
               tables: dict[str, dict[Any, int]],
+              names: list[str],
               orders: DataFrame) -> None:
     """
     Fill core tables with existing data
     """
     core = Core(core_path)
     for _, row in orders.iterrows():
-        tables = core.insert_customer(row, tables)
-        #tables = core.insert_shipping(row, tables)
-        #tables = core.insert_product(row, tables)
-        #tables = core.insert_order(row, tables)
-    print(core.data['customer'])
+        for name in names[:3]:
+            tables, name_id = core.insert_values(row, tables, name)
+    for name in names[:3]:
+        print(core.data[name])
 
 
 def normalize() -> None:
@@ -158,7 +171,7 @@ def normalize() -> None:
     columns_path = Path('new_columns.json')
     core_names = table_names[10:]
     fill_latest(lookups, core_names)
-    fill_core(columns_path, lookups, old_table)
+    fill_core(columns_path, lookups, core_names, old_table)
 
 
 if __name__ == '__main__':
