@@ -159,3 +159,6 @@ SELECT * FROM orders LIMIT 4;
     <td align="right">86838</td>
   </tr>
 </table>
+
+## My design
+![database design](https://user-images.githubusercontent.com/39754370/154628535-cdeff601-748e-4373-ba7b-fb1800d27d30.png)
