@@ -9,6 +9,9 @@ from pandas import read_csv, DataFrame, concat
 
 
 class Core:
+    """
+    Process and store data in core tables
+    """
     def __init__(self, path):
         self.path = path
         self.data: dict[str, DataFrame] = {}
@@ -26,31 +29,40 @@ class Core:
         for table, column_names in columns_map.items():
             self.data[table] = DataFrame(columns=column_names)
 
-    def get_key(self, data, table_ids, table):
+    def get_key(self, data, table_ids, table, lookups):
         """
         Create a unique key for lookup table
+        :param data: a row of existing data
+        :param table_ids: lookup table
+        :param table: table to write to
+        :param table_ids: a list of all tables
+        :returns: a generated key
         """
         columns = self.data[table].columns
         result = []
         for column in columns[1:]:
-            if column.endswith('_id'):
+            if column[:-3] in lookups:
+                result.append(data[column])
+            elif column.endswith('_id'):
                 column_map = table_ids[column[:-3]]
                 value = data[column[:-3]]
-                result.append(column_map[value])
+                result.append(column_map[value.strip()])
             else:
                 result.append(data[column])
         return result
 
-    def insert_values(self, data, table_ids, table):
+    def insert_values(self, data, table_ids, table, lookups):
         """
         Insert existing data into new customer table
         :param data: a row of existing data
         :param table_ids: lookup table
+        :param table: table to write to
+        :param table_ids: a list of all tables
         :returns: updated lookup table and customer id
         """
         columns = self.data[table].columns
         table_map = table_ids[table]
-        key = self.get_key(data, table_ids, table)
+        key = self.get_key(data, table_ids, table, lookups)
         if tuple(key) in table_map:
             _id = table_ids[table][tuple(key)]
         else:
@@ -130,6 +142,20 @@ def fill_lookups(tables: dict[str, dict[Any, int]],
     return tables
 
 
+def store_lookup(name: str, values: dict[Any, int]) -> None:
+    """
+    Store lookup table as a CSV file
+    :param name:
+    :param values:
+    :returns: None
+    """
+    storage_path = Path(f'{name}.csv')
+    with storage_path.open('w') as file:
+        file.write(f'{name}_id,{name}_name\n')
+        for name, _id in values.items():
+            file.write(f'{_id},{name}\n')
+
+
 def fill_latest(tables: dict[str, dict[Any, int]],
                 names: list[str]) -> dict[str, dict[Any, int]]:
     """
@@ -143,19 +169,19 @@ def fill_latest(tables: dict[str, dict[Any, int]],
 def fill_core(core_path: Path,
               tables: dict[str, dict[Any, int]],
               names: list[str],
-              orders: DataFrame) -> None:
+              orders: DataFrame) -> dict[str, DataFrame]:
     """
     Fill core tables with existing data
     """
     core = Core(core_path)
     for _, row in orders.iterrows():
-        for name in names[:3]:
-            tables, name_id = core.insert_values(row, tables, name)
-    for name in names[:3]:
-        print(core.data[name])
+        for name in names:
+            tables, name_id = core.insert_values(row, tables, name, names)
+            row[f'{name}_id'] = name_id
+    return core.data
 
 
-def normalize() -> None:
+def normalize() -> dict[str, Any]:
     """
     Convert the orders table into normalized tables
     :returns: None
@@ -171,8 +197,14 @@ def normalize() -> None:
     columns_path = Path('new_columns.json')
     core_names = table_names[10:]
     fill_latest(lookups, core_names)
-    fill_core(columns_path, lookups, core_names, old_table)
+    core = fill_core(columns_path, lookups, core_names, old_table)
+    return lookups | core
 
 
 if __name__ == '__main__':
-    normalize()
+    results = normalize()
+    for table_name, results in results.items():
+        if isinstance(results, dict):
+            store_lookup(table_name, results)
+        if isinstance(results, DataFrame):
+            results.to_csv(f'{table_name}.csv', index=False)
