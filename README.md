@@ -37,6 +37,16 @@ cd SQL_Practice
 sh install_problems.sh
 ```
 
+## References
+
+[SQL Style Guide by Simon Holywell][3]
+[How to Calculate Percentiles in SQL Server][4]
+[SQL CREATE VIEW Statement - W3Schools][5]
+
+
 [0]: https://www.postgresql.org
 [1]: https://github.com/kiwidamien
 [2]: https://github.com/kiwidamien/SQL_practice
+[3]: https://www.sqlstyle.guide
+[4]: https://popsql.com/learn-sql/sql-server/how-to-calculate-percentiles-in-sql-server
+[5]: https://www.w3schools.com/sql/sql_view.asp
