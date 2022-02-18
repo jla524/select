@@ -1,0 +1,15 @@
+customer_segment
+ship_mode
+country
+region
+state_or_province
+city
+product_category
+product_subcategory
+product_container
+order_priority
+customer
+address
+product
+shipping
+order
