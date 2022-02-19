@@ -39,8 +39,10 @@ sh install_problems.sh
 
 ## References
 
-[SQL Style Guide by Simon Holywell][3]
+[SQL Style Guide][3]
+
 [How to Calculate Percentiles in SQL Server][4]
+
 [SQL CREATE VIEW Statement - W3Schools][5]
 
 
