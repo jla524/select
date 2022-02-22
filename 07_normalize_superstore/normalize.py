@@ -7,6 +7,8 @@ from typing import Any
 
 from pandas import read_csv, DataFrame, concat
 
+T = dict[str, dict[Any, int]]
+
 
 class Core:
     """
@@ -87,7 +89,7 @@ def get_names(path: Path) -> list[str]:
     return names
 
 
-def make_tables(names: list[str]) -> dict[str, dict[Any, int]]:
+def make_tables(names: list[str]) -> T:
     """
     Make a list of tables from names
     :param names: list of table names
@@ -123,9 +125,7 @@ def clean_columns(orders: DataFrame) -> DataFrame:
     return orders
 
 
-def fill_lookups(tables: dict[str, dict[Any, int]],
-                 names: list[str],
-                 orders: DataFrame) -> dict[str, dict[Any, int]]:
+def fill_lookups(tables: T, names: list[str], orders: DataFrame) -> T:
     """
     Fill lookup tables with existing data
     :param tables: a list of lookup tables
@@ -156,8 +156,7 @@ def store_lookup(name: str, values: dict[Any, int]) -> None:
             file.write(f'{_id},{column_name}\n')
 
 
-def fill_latest(tables: dict[str, dict[Any, int]],
-                names: list[str]) -> dict[str, dict[Any, int]]:
+def fill_latest(tables: T, names: list[str]) -> T:
     """
     Fill core lookup tables with latest index
     :param tables: a dict of lookup tables
