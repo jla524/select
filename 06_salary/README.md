@@ -62,3 +62,5 @@ If you think you have found an error in the posted results, please create a Gith
     <td align="right">1</td>
   </tr>
 </table>
+
+2. Use the `CHARINDEX` function to map the job titles into 4 categories: data analyst, data scientist, data engineer, and machine learning engineer; then show the count for each category. If a job title fits into more than one category (e.g. "Machine Learning Engineer/Data Scienst"), choose the one that comes first alphabetically.
