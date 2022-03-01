@@ -89,3 +89,75 @@ If you think you have found an error in the posted results, please create a Gith
 </table>
 
 3. **Use the `SPLIT_PART` function to show all unique units used in the salary column.**
+
+Answer: yr, hr, and mo.
+
+4. **Find the average, minimum, and maximum annual salary for each job category.**
+
+<table border="1">
+  <tr>
+    <th align="centre">category</th>
+    <th align="centre">avg</th>
+    <th align="centre">min</th>
+    <th align="centre">max</th>
+  </tr>
+  <tr>
+    <td align="left">Data Engineer</td>
+    <td align="right">907822</td>
+    <td align="right">21628</td>
+    <td align="right">7059780</td>
+  </tr>
+  <tr>
+    <td align="left">Data Analyst</td>
+    <td align="right">574183</td>
+    <td align="right">10814</td>
+    <td align="right">3773676</td>
+  </tr>
+  <tr>
+    <td align="left">Machine Learning Engineer</td>
+    <td align="right">785737</td>
+    <td align="right">21628</td>
+    <td align="right">7059780</td>
+  </tr>
+  <tr>
+    <td align="left">Data Scientist</td>
+    <td align="right">1133428</td>
+    <td align="right">50613</td>
+    <td align="right">18807948</td>
+  </tr>
+</table>
+
+5. **Find the top 5 companies with the highest average annual salary.**
+
+<table border="1">
+  <tr>
+    <th align="centre">company</th>
+    <th align="centre">avg</th>
+    <th align="centre">count</th>
+  </tr>
+  <tr>
+    <td align="left">L Brands</td>
+    <td align="right">18807948</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="left">Orbinet Technologies</td>
+    <td align="right">8671344</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="left">Ritwik IT Services</td>
+    <td align="right">8666964</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="left">Hashworks</td>
+    <td align="right">8288952</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="left">Artis signature</td>
+    <td align="right">7524456</td>
+    <td align="right">1</td>
+  </tr>
+</table>
